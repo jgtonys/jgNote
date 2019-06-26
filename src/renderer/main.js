@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import axios from 'axios'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+
+Vue.use(Vuetify)
 
 import App from './App'
 import router from './router'
