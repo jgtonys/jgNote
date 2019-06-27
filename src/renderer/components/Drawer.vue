@@ -66,37 +66,37 @@ export default {
       {
         to: '/dashboard',
         icon: 'mdi-view-dashboard',
-        text: 'Dashboard'
+        text: 'Main'
       },
       {
         to: '/test',
         icon: 'mdi-account',
-        text: 'User Profile'
+        text: '테스트'
       },
       {
         to: '/table-list',
         icon: 'mdi-clipboard-outline',
-        text: 'Table List'
+        text: '테스트'
       },
       {
         to: '/typography',
         icon: 'mdi-format-font',
-        text: 'Typography'
+        text: '테스트'
       },
       {
         to: '/icons',
         icon: 'mdi-chart-bubble',
-        text: 'Icons'
+        text: '테스트'
       },
       {
         to: '/maps',
         icon: 'mdi-map-marker',
-        text: 'Maps'
+        text: '테스트'
       },
       {
         to: '/notifications',
         icon: 'mdi-bell',
-        text: 'Notifications'
+        text: '테스트'
       }
     ],
     responsive: true

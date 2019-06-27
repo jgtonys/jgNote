@@ -60,33 +60,33 @@ export default {
       },
       {
         to: '/test',
-        icon: 'mdi-account',
-        text: 'User Profile'
+        icon: 'note',
+        text: '테스트'
       },
       {
         to: '/table-list',
-        icon: 'mdi-clipboard-outline',
-        text: 'Table List'
+        icon: 'note',
+        text: '테스트'
       },
       {
         to: '/typography',
-        icon: 'mdi-format-font',
-        text: 'Typography'
+        icon: 'note',
+        text: '테스트'
       },
       {
         to: '/icons',
-        icon: 'mdi-chart-bubble',
-        text: 'Icons'
+        icon: 'note',
+        text: '테스트'
       },
       {
         to: '/maps',
-        icon: 'mdi-map-marker',
-        text: 'Maps'
+        icon: 'note',
+        text: '테스트'
       },
       {
         to: '/notifications',
-        icon: 'mdi-bell',
-        text: 'Notifications'
+        icon: 'note',
+        text: '테스트'
       }
     ]
   }),

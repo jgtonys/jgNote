@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import AnotherPage from '../components/AnotherPage'
+import NewNote from '../components/NewNote'
 
 Vue.use(Router)
 
@@ -14,6 +15,10 @@ export default new Router({
     {
       path: '/test',
       component: AnotherPage
+    },
+    {
+      path: '/newNote',
+      component: NewNote
     },
     {
       path: '*',
