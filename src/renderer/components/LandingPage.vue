@@ -1,17 +1,13 @@
 <template>
 <div id="app">
-  <div class="card-content">
-    <v-btn flat @click="newNote">+</v-btn>
-  </div>
-
-  <swipe-list ref="list" class="card" :disabled="!enabled" :items="noteList" :key="ids" :revealed.sync="revealed" :item-disabled="({ disabled }) => disabled" @closed="setLastEvent('closed', $event)"
-    @leftRevealed="setLastEvent('leftRevealed', $event)" @rightRevealed="setLastEvent('rightRevealed', $event)">
+  <swipe-list ref="list" class="card" :disabled="!enabled" :items="noteList" :key="ids" :revealed.sync="revealed"
+    @leftRevealed="setLastEvent('leftRevealed', $event)" @rightRevealed="setLastEvent('rightRevealed', $event)" @swipeout:click="itemClick">
     <template v-slot="{ item, index, revealLeft, revealRight, close, revealed }">
       <transition-group name="list-complete" tag="p">
         <div ref="content" class="card-content noselect list-complete-item" @click.native="itemClick(item)" :key="item.title_text">
           <h2>{{ item.title_text }}</h2>
           <p>{{ item.content_text }}</p>
-					<p>{{ item.createdAt }}</p>
+          <p>{{ item.createdAt }}</p>
         </div>
       </transition-group>
     </template>
@@ -42,7 +38,6 @@ import {
   SwipeList,
   SwipeOut
 } from 'vue-swipe-actions';
-import firebase from 'firebase'
 import {
   db
 } from '../config/db';
@@ -53,9 +48,9 @@ export default {
     SwipeOut,
     SwipeList,
   },
-  computed: {
-    noteList() {
-      return this.mockSwipeList
+  firestore() {
+    return {
+      noteList: db.collection('notes').orderBy('createdAt', "desc")
     }
   },
   data() {
@@ -63,13 +58,14 @@ export default {
       enabled: true,
       page: 0,
       revealed: {},
+      noteList: [],
       lastEventDescription: '',
       ids: 0,
       mockSwipeList: [],
     };
   },
   mounted() {
-    this.refreshList()
+    //this.refreshList()
     // ideally should be in some global handler/store
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
@@ -79,37 +75,16 @@ export default {
     window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
-    refreshList() {
-      let leadsRef = db.ref('/notes/')
-      leadsRef.on('value', (snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          this.mockSwipeList.push(childSnapshot.val())
-        });
-      });
-			console.log(this.mockSwipeList)
-
-    },
-    newNote() {
-      console.log("newnote")
-      this.$router.push('/newNote')
-    },
-    dd(v) {
-      console.log(v.target);
-    },
-    revealFirstRight() {
-      this.$refs.list.revealRight(0);
-    },
-    revealFirstLeft() {
-      this.$refs.list.revealLeft(0);
-    },
-    closeFirst() {
-      this.$refs.list.closeActions(0);
-    },
-    closeAll() {
-      this.$refs.list.closeActions();
-    },
     remove(item) {
-      this.mockSwipeList = this.mockSwipeList.filter(i => i !== item);
+      console.log(item)
+      console.log(item.id)
+      db.collection("notes").doc(item.id).delete().then(function() {
+        console.log("Document successfully deleted!");
+      }).catch(function(error) {
+        console.error("Error removing document: ", error);
+      });
+      //this.mockSwipeList = this.mockSwipeList.filter(i => i !== item);
+
     },
     setLastEvent(name, {
       item,

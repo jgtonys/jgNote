@@ -4,9 +4,13 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import moment from "moment"
 import VueMomentJS from "vue-momentjs"
+import { firebase } from "@firebase/app";
+import "@firebase/firestore";
+import { firestorePlugin } from 'vuefire'
 
 Vue.use(VueMomentJS, moment)
 Vue.use(Vuetify)
+Vue.use(firestorePlugin)
 
 import App from './App'
 import router from './router'

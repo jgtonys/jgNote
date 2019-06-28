@@ -8,7 +8,6 @@
 </template>
 
 <script>
-
 import {
   db
 } from '../config/db';
@@ -17,29 +16,31 @@ export default {
     return {
       title_text: "",
       content_text: "",
-      right: null
+      right: null,
+      noteList: [],
+    }
+  },
+  firestore() {
+    return {
+      noteList: db.collection('notes').orderBy('createdAt', "desc")
     }
   },
   methods: {
     addNewNote() {
       let postData = {
+        //id: this.noteList.length,
         title_text: this.title_text,
         content_text: this.content_text,
-        createdAt: this.$moment(new Date()).format("YYYY-MM-DD HH:MM:SS")
+        createdAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       };
-      let newPostKey = db.ref().child('posts').push().key;
-      var updates = {};
-      updates['/notes/' + newPostKey] = postData;
-      //updates['/user-posts/' + uid + '/' + newPostKey] = postData;
 
-      db.ref().update(updates, function(err) {
-        if(err) {
-          console.log("ERROR : new note pushing fail!")
-        }
-        else {
-          console.log("SUCCESS : new note pushing completed!")
-        }
-      });
+      db.collection("notes").add(postData)
+        .then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
 
       this.title_text = '';
       this.content_text = '';
