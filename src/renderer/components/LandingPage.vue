@@ -1,39 +1,93 @@
 <template>
 <div id="app">
-  <swipe-list ref="list" class="card" :disabled="!enabled" :items="noteList" :key="ids" :revealed.sync="revealed"
-    @leftRevealed="setLastEvent('leftRevealed', $event)" @rightRevealed="setLastEvent('rightRevealed', $event)" @swipeout:click="itemClick">
-    <template v-slot="{ item, index, revealLeft, revealRight, close, revealed }">
-      <transition-group name="list-complete" tag="p">
-        <div ref="content" class="card-content noselect list-complete-item" @click.native="itemClick(item)" :key="item.title_text">
-          <h2>{{ item.title_text }}</h2>
-          <p>{{ item.content_text }}</p>
-          <p>{{ item.createdAt }}</p>
-        </div>
-      </transition-group>
-    </template>
+  <!--<v-toolbar-side-icon @click.native.stop="drawer = !drawer" ></v-toolbar-side-icon>-->
+  <v-tabs color="transparent" show-arrows>
+    <v-tabs-slider color="black" fixed></v-tabs-slider>
 
-    <template v-slot:left="{ item, close, index }">
-      <div class="swipeout-action red" title="remove" @click="remove(item)">
-        <i class="fa fa-trash"></i>
-      </div>
-    </template>
+    <v-tab v-for="(i,key) in noteMenu" :key="key" :href="'#tab-' + key">
+      <v-icon medium>{{ i.icon }}</v-icon>
+      {{ i.text }}
+    </v-tab>
 
-    <template v-slot:right="{ item }">
-      <div class="swipeout-action blue">
-        <i class="fa fa-heart"></i>
+
+    <v-tabs-items>
+      <v-tab-item v-for="(i,key) in noteMenu" :key="key" :value="'tab-' + key">
+        <v-card flat>
+          {{ i }}
+          <swipe-list ref="list" class="card" :disabled="!enabled" :items="noteList" :key="key" :revealed.sync="revealed" @leftRevealed="setLastEvent('leftRevealed', $event)" @rightRevealed="setLastEvent('rightRevealed', $event)"
+            @swipeout:click="itemClick">
+            <template v-slot="{ item, index, revealLeft, revealRight, close, revealed }">
+              <transition-group name="list-complete" tag="p">
+                <div ref="content" class="card-content noselect list-complete-item" @click="noteDetail(item)" :key="item.title_text">
+                  <viewer :value="item.title_text" height="50px" />
+                  <p>{{ item.createdAt }}</p>
+                </div>
+              </transition-group>
+            </template>
+
+            <template v-slot:left="{ item, close, index }">
+              <div class="swipeout-action red" title="remove" @click="remove(item)">
+                <i class="fa fa-trash"></i>
+              </div>
+            </template>
+
+            <template v-slot:right="{ item }">
+              <div class="swipeout-action blue">
+                <i class="fa fa-heart"></i>
+              </div>
+            </template>
+            <template v-slot:empty>
+              <div>
+                list is empty ( filtered or just empty )
+              </div>
+            </template>
+          </swipe-list>
+
+          <v-fab-transition>
+            <v-btn color="pink" dark fixed bottom right fab @click="newNote(i.id)">
+              <v-icon>add</v-icon>
+            </v-btn>
+          </v-fab-transition>
+        </v-card>
+      </v-tab-item>
+    </v-tabs-items>
+  </v-tabs>
+
+
+
+
+
+  <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+    <v-card>
+      <v-toolbar dark color="black">
+        <v-btn icon dark @click="dialog = false">
+          <v-icon>close</v-icon>
+        </v-btn>
+        <v-toolbar-title>{{ selectedNote.createdAt }}에 적힌 노트</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-items>
+          <v-btn dark flat @click="dialog = false">Save</v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
+
+      <v-divider></v-divider>
+      <div class="pa-5">
+        <viewer :value="selectedNote.content_text" height="500px" />
       </div>
-    </template>
-    <template v-slot:empty>
-      <div>
-        list is empty ( filtered or just empty )
-      </div>
-    </template>
-  </swipe-list>
+
+    </v-card>
+  </v-dialog>
+
+
 
 </div>
 </template>
 
 <script>
+import 'tui-editor/dist/tui-editor-contents.css';
+import {
+  Viewer
+} from '@toast-ui/vue-editor'
 import {
   SwipeList,
   SwipeOut
@@ -47,10 +101,12 @@ export default {
   components: {
     SwipeOut,
     SwipeList,
+    'viewer': Viewer
   },
   firestore() {
     return {
-      noteList: db.collection('notes').orderBy('createdAt', "desc")
+      noteList: db.collection('notes').orderBy('createdAt', "desc"),
+      noteMenu: db.collection('menu').orderBy("createdAt")
     }
   },
   data() {
@@ -62,6 +118,12 @@ export default {
       lastEventDescription: '',
       ids: 0,
       mockSwipeList: [],
+      noteMenu: [],
+      dialog: false,
+      notifications: false,
+      sound: true,
+      widgets: false,
+      selectedNote: "test"
     };
   },
   mounted() {
@@ -75,6 +137,19 @@ export default {
     window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
+    noteDetail(item) {
+      this.selectedNote = item
+      this.dialog = true
+    },
+    newNote(menuId) {
+      this.$store.dispatch('menuIdSet',{
+        payload: menuId
+      })
+      this.$router.push('/newNote')
+    },
+    drawerToggle() {
+      this.$store.dispatch('drawerToggle')
+    },
     remove(item) {
       console.log(item)
       console.log(item.id)

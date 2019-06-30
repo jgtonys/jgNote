@@ -55,6 +55,7 @@
   "dependencies": {
     "@firebase/app": "^0.4.9",
     "@firebase/firestore": "^1.4.3",
+    "@toast-ui/vue-editor": "^1.1.1",
     "axios": "^0.18.0",
     "firebase": "^6.2.3",
     "moment": "^2.24.0",

@@ -22,35 +22,19 @@
         </v-layout>
       </v-img>
     </v-navigation-drawer>
-    <v-toolbar fixed app flat color="gray lighten-2">
-      <v-toolbar-side-icon @click.native.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>search</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
-    </v-toolbar>
     <v-content>
       <v-container fluid class="pa-0">
         <v-slide-y-transition mode="out-in">
           <router-view></router-view>
         </v-slide-y-transition>
-        <v-bottom-nav :active.sync="bottomNav" :color="color" :value="true" fixed dark shift app>
-          <v-btn dark @click="$router.push('/')">
-            <span>List</span>
-            <v-icon>list</v-icon>
-          </v-btn>
-
-          <v-btn dark @click="$router.push('/newNote')">
-            <span>New</span>
-            <v-icon>note_add</v-icon>
-          </v-btn>
-        </v-bottom-nav>
       </v-container>
     </v-content>
+
+      <v-fab-transition v-if="!drawer">
+        <v-btn color="black" dark fixed bottom left fab @click.native.stop="drawer = !drawer">
+          <v-icon>menu</v-icon>
+        </v-btn>
+      </v-fab-transition>
   </v-app>
 </div>
 </template>
@@ -68,13 +52,18 @@ export default {
     bottomNav: 0,
     drawer: true,
     title: "TEST MENU",
-    links: []
+    links: [{
+      to: '/',
+      icon: 'home',
+      text: 'HOME'
+    }],
   }),
+  /*
   firestore() {
     return {
       links: db.collection('menu').orderBy("createdAt")
     }
-  },
+  },*/
   methods: {
     addMenu() {
       let postData = {
@@ -108,6 +97,9 @@ export default {
         case 3:
           return 'indigo'
       }
+    },
+    hideDrawerMenu() {
+      return this.$store.state.hideDrawerMenu
     }
   }
 }
