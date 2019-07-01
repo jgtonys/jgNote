@@ -17,12 +17,15 @@
           <swipe-list ref="list" class="card" :disabled="!enabled" :items="noteList" :key="" :revealed.sync="revealed" @leftRevealed="setLastEvent('leftRevealed', $event)" @rightRevealed="setLastEvent('rightRevealed', $event)"
             @swipeout:click="itemClick">
             <template v-slot="{ item, index, revealLeft, revealRight, close, revealed }">
-              <transition-group name="list-complete" tag="p" v-if="item.menuId==i.id">
-                <div ref="content" class="card-content noselect list-complete-item" @click="noteDetail(item)" :key="item.title_text">
+              <div v-show="item.menuId==i.id">
+              <transition-group name="list-complete" tag="p" >
+
+                <div ref="content" class="card-content noselect list-complete-item" @click="noteDetail(item)" :key="item.title_text" >
                   <viewer :value="item.title_text" height="50px" />
                   <p>{{ item.createdAt }}</p>
                 </div>
               </transition-group>
+            </div>
             </template>
 
             <template v-slot:left="{ item, close, index }">
