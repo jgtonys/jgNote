@@ -53,14 +53,29 @@ export default {
   methods: {
     addNewNote() {
       this.title_text = this.content_text.split('\n')[0]
-      let postData = {
-        //id: this.noteList.length,
-        title_text: this.title_text,
-        content_text: this.content_text,
-        createdAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-      };
-
+      var postData
       this.$store.dispatch('getMenuId').then(menuId => {
+        postData = {
+          title_text: this.title_text,
+          content_text: this.content_text,
+          menuId: menuId,
+          createdAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+        };
+
+        db.collection("notes/").add(postData)
+          .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch((error) => {
+            console.error("Error adding document: ", error);
+          });
+
+        this.title_text = '';
+        this.content_text = '';
+        this.$router.push('/');
+      })
+
+      /*this.$store.dispatch('getMenuId').then(menuId => {
         console.log("메뉴아이디 : " + menuId)
         db.collection("menu/"+menuId+"/notes/").add(postData)
           .then((docRef) => {
@@ -74,13 +89,19 @@ export default {
         this.content_text = '';
         this.$router.push('/')
 
-      })
+      })*/
 
-      /*
+      /*db.collection("notes/").add(postData)
+        .then((docRef) => {
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
 
-
-
-      */
+      this.title_text = '';
+      this.content_text = '';
+      this.$router.push('/')*/
     },
 
     open(link) {

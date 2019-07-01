@@ -42,7 +42,7 @@ const actions = {
   },
   getMenuId ( { commit, state }) {
     return state.menuId
-  }
+  },
 
 }
 

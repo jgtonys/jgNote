@@ -4,7 +4,7 @@
   <v-tabs color="transparent" show-arrows>
     <v-tabs-slider color="black" fixed></v-tabs-slider>
 
-    <v-tab v-for="(i,key) in noteMenu" :key="key" :href="'#tab-' + key">
+    <v-tab v-for="(i,key) in noteMenu" :key="key" :href="'#tab-' + key" @click="tabClick(i.id)">
       <v-icon medium>{{ i.icon }}</v-icon>
       {{ i.text }}
     </v-tab>
@@ -14,10 +14,10 @@
       <v-tab-item v-for="(i,key) in noteMenu" :key="key" :value="'tab-' + key">
         <v-card flat>
           {{ i }}
-          <swipe-list ref="list" class="card" :disabled="!enabled" :items="noteList" :key="key" :revealed.sync="revealed" @leftRevealed="setLastEvent('leftRevealed', $event)" @rightRevealed="setLastEvent('rightRevealed', $event)"
+          <swipe-list ref="list" class="card" :disabled="!enabled" :items="noteList" :key="" :revealed.sync="revealed" @leftRevealed="setLastEvent('leftRevealed', $event)" @rightRevealed="setLastEvent('rightRevealed', $event)"
             @swipeout:click="itemClick">
             <template v-slot="{ item, index, revealLeft, revealRight, close, revealed }">
-              <transition-group name="list-complete" tag="p">
+              <transition-group name="list-complete" tag="p" v-if="item.menuId==i.id">
                 <div ref="content" class="card-content noselect list-complete-item" @click="noteDetail(item)" :key="item.title_text">
                   <viewer :value="item.title_text" height="50px" />
                   <p>{{ item.createdAt }}</p>
@@ -105,8 +105,9 @@ export default {
   },
   firestore() {
     return {
-      noteList: db.collection('notes').orderBy('createdAt', "desc"),
-      noteMenu: db.collection('menu').orderBy("createdAt")
+      noteList: db.collection('notes').orderBy("createdAt","desc"),
+      noteMenu: db.collection('menu').orderBy("createdAt"),
+
     }
   },
   data() {
@@ -114,19 +115,23 @@ export default {
       enabled: true,
       page: 0,
       revealed: {},
-      noteList: [],
       lastEventDescription: '',
       ids: 0,
       mockSwipeList: [],
       noteMenu: [],
+      noteList: [],
       dialog: false,
       notifications: false,
       sound: true,
       widgets: false,
-      selectedNote: "test"
+      selectedNote: "test",
+      tid: 'FX46Drx90NHm4BVu33Dr'
     };
   },
+  created() {
+  },
   mounted() {
+
     //this.refreshList()
     // ideally should be in some global handler/store
     window.addEventListener('keydown', this.onKeyDown);
@@ -137,12 +142,37 @@ export default {
     window.removeEventListener('keyup', this.onKeyUp);
   },
   methods: {
+    /*
+    noteList(i) {
+      var tmpList = []
+      console.log("i 의 값 : " + i)
+      db.collection('menu').doc(i).collection('notes').get().then(
+        snapshot => {
+          //if (!snapshot.exists) return [];
+          snapshot.forEach(task => {
+
+            tmpList.push(task.data())
+            console.log(tmpList)
+          });
+          return tmpList
+        });
+      return tmpList
+    },*/
     noteDetail(item) {
       this.selectedNote = item
       this.dialog = true
     },
+    tabClick(menuId) {
+      console.log(menuId)
+      this.tid = menuId
+      /*
+      this.$bind('noteList', db.collection('menu').doc(menuId).collection('notes').orderBy("createdAt")).then(n => {
+        this.noteList = n;
+        console.log(n)
+      })*/
+    },
     newNote(menuId) {
-      this.$store.dispatch('menuIdSet',{
+      this.$store.dispatch('menuIdSet', {
         payload: menuId
       })
       this.$router.push('/newNote')
