@@ -17,7 +17,7 @@ testdb.enablePersistence()
   .then(() => {
       // Initialize Cloud Firestore through firebase
       //db = app.firestore();
-      console.log("here")
+      console.log("온라인으로 전환됨")
   })
   .catch(function(err) {
     console.log(err)

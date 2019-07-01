@@ -1,22 +1,41 @@
-import { app, BrowserWindow } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  Tray,
+  Menu,
+  nativeImage
+} from 'electron'
+const path = require('path')
+
+
 
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
+
 if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+  global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
+var icon = path.resolve(path.join(__static,'test.png'))
 
-function createWindow () {
+let tray = null
+
+//var staticFolder = path.resolve(path.join(__dirname,'ico','favicon.ico'))
+
+app.dock.hide()
+
+let mainWindow
+const winURL = process.env.NODE_ENV === 'development' ?
+  `http://localhost:9080` :
+  `file://${__dirname}/index.html`
+
+function createWindow() {
   /**
    * Initial window options
    */
+
   mainWindow = new BrowserWindow({
     height: 600,
     useContentSize: true,
@@ -25,12 +44,30 @@ function createWindow () {
 
   mainWindow.loadURL(winURL)
 
+  //const tray = new Tray(`${__dirname}/favicon.ico`);
+  //const tray = new Tray(require('path').join(__dirname, "./src/main/favicon.ico"))
+  createTray()
+
+
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
 
+
+
 app.on('ready', createWindow)
+
+app.on('second-instance', (event, commandLine, workingDirectory) => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    } else if (!win.isVisible()) {
+      mainWindow.show();
+    }
+    mainWindow.focus();
+  }
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -43,6 +80,35 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+function createTray() {
+
+  //메인 BrowserWindow에서 닫기를 누를시 히든처리가 선행되어야함.
+  mainWindow.on('close', (event) => {
+    event.preventDefault();
+    mainWindow.hide();
+  });
+
+  tray = new Tray(path.join(__static,'test.png'))
+  tray.setToolTip('jgNote : Markdown Note Application')
+  tray.on('click', () => {
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+    mainWindow.show();
+  })
+  var contextMenu = Menu.buildFromTemplate([{
+    label: `jgNote v${app.getVersion()}`
+  }, {
+    label: 'Close',
+    click: function() {
+      mainWindow.close();
+      app.quit();
+      app.exit();
+    }
+  }])
+  tray.on('right-click', () => {
+    tray.popUpContextMenu(contextMenu)
+  })
+}
 
 /**
  * Auto Updater

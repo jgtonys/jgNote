@@ -8,6 +8,7 @@ import { firebase } from "@firebase/app";
 import "@firebase/firestore";
 import { firestorePlugin } from 'vuefire'
 
+
 Vue.use(VueMomentJS, moment)
 Vue.use(Vuetify)
 Vue.use(firestorePlugin)

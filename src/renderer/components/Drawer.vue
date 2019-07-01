@@ -1,160 +1,168 @@
 <template>
-  <v-navigation-drawer
-    id="app-drawer"
-    v-model="inputValue"
-    dark
-    app
-    fixed
-    mobile-break-point="991"
-    width="260"
-  >
-    <v-img
-      :src="image"
-      :gradient="sidebarOverlayGradiant"
-      height="100%"
-    >
-      <v-layout
-        class="fill-height"
-        tag="v-list"
-        column
-      >
+<v-app>
+  <v-navigation-drawer id="app-drawer" v-model="drawer" dark app fixed mobile-break-point="991" width="260">
+    <v-img src="" gradient="rgba(27, 27, 27, 0.74),rgba(27, 27, 27, 0.74)" height="100%">
+      <v-layout class="fill-height" tag="v-list" column>
         <v-list-tile avatar>
-          <v-list-tile-avatar
-            color="white"
-          >
-
+          <v-list-tile-avatar color="white">
           </v-list-tile-avatar>
-          <v-list-tile-title class="title">
-            TEST DRAWER
+          <v-list-tile-title>
+            jgNote
           </v-list-tile-title>
         </v-list-tile>
-        <v-divider/>
-        <v-list-tile
-          v-for="(link, i) in links"
-          :key="i"
-          :to="link.to"
-          active-class="rgba(27, 27, 27, 0.74)"
-          avatar
-          class="v-list-item"
-        >
+        <v-divider />
+        <v-list-tile @click="allNoteMenu">
           <v-list-tile-action>
-            <v-icon>{{ link.icon }}</v-icon>
+            <v-icon medium>home</v-icon>
           </v-list-tile-action>
-          <v-list-tile-title
-            v-text="link.text"
-          />
+          <v-list-tile-title>All Notes</v-list-tile-title>
         </v-list-tile>
+        <v-list-tile v-for="(menu,key) in noteMenu" @click="clickMenu(menu)" :key="menu.id" active-class="rgba(27, 27, 27, 0.74)" avatar class="v-list-item" @mouseover="listHover = key" @mouseleave="listHover = -1">
+          <v-list-tile-action>
+            <v-icon medium>{{ menu.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title v-text="menu.text" />
+          <v-icon v-if="listHover === key" medium @click.stop="deleteList(menu)">close</v-icon>
+        </v-list-tile>
+        <v-btn @click="makeNewListDialog">목록추가</v-btn>
       </v-layout>
     </v-img>
   </v-navigation-drawer>
+  <v-content>
+    <v-container fluid class="pa-0 gray-color" style="height: 100%;">
+      <v-slide-y-transition mode="out-in">
+        <router-view :drawer="() => {drawer = !drawer}" :listFlag="listFlagValue"></router-view>
+      </v-slide-y-transition>
+    </v-container>
+  </v-content>
+
+  <v-dialog v-model="makeListDialog" max-width="300" persistent>
+    <v-card>
+      <div class="pa-3">
+        <v-text-field v-model="newListTitle" :counter="20" placeholder="NEW LIST" required></v-text-field>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn flat="flat" @click="makeListDialog = false">
+            Cancel
+          </v-btn>
+          <v-btn :loading="makeListLoading" :disabled="makeListLoading" flat="flat" @click="makeNewList">
+            Confirm
+          </v-btn>
+        </v-card-actions>
+      </div>
+    </v-card>
+  </v-dialog>
+</v-app>
 </template>
 
 <script>
-// Utilities
 import {
-  mapMutations,
-  mapState
-} from 'vuex'
+  db
+} from '../config/db';
 
 export default {
-  name: 'Drawer',
   data: () => ({
-    logo: '~@/assets/vuetifylogo.png',
-    inputValue: true,
-    image: 'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg',
-    links: [
-      {
-        to: '/dashboard',
-        icon: 'mdi-view-dashboard',
-        text: 'Main'
-      },
-      {
-        to: '/test',
-        icon: 'mdi-account',
-        text: '테스트'
-      },
-      {
-        to: '/table-list',
-        icon: 'mdi-clipboard-outline',
-        text: '테스트'
-      },
-      {
-        to: '/typography',
-        icon: 'mdi-format-font',
-        text: '테스트'
-      },
-      {
-        to: '/icons',
-        icon: 'mdi-chart-bubble',
-        text: '테스트'
-      },
-      {
-        to: '/maps',
-        icon: 'mdi-map-marker',
-        text: '테스트'
-      },
-      {
-        to: '/notifications',
-        icon: 'mdi-bell',
-        text: '테스트'
-      }
-    ],
-    responsive: true
+    drawer: false,
+    listHover: false,
+    makeListDialog: false,
+    makeListLoading: false,
+    newListTitle: "",
+    listFlagValue: {
+      id: 0,
+      icon: "",
+      text: ""
+    }
   }),
-  computed: {
-    ...mapState('drawer', 'color', 'sidebarBackgroundColor'),
-    /*inputValue: {
-      get () {
-        console.log("asdf");
-        return this.$store.getters.getDrawerValue
-      },
-      set (val) {
-        //this.setDrawer(val)
-      }
-    },*/
-    items () {
-      return this.$t('Layout.View.items')
-    },
-    sidebarOverlayGradiant () {
-      return `${this.$store.state.sidebarBackgroundColor}, ${this.$store.state.sidebarBackgroundColor}`
+  firestore() {
+    return {
+      noteMenu: db.collection('menu').orderBy("createdAt"),
     }
   },
-  mounted () {
-    //this.onResponsiveInverted()
-    //window.addEventListener('resize', this.onResponsiveInverted)
-  },
-  beforeDestroy () {
-    //window.removeEventListener('resize', this.onResponsiveInverted)
-  },
   methods: {
+    allNoteMenu() {
+      this.listFlagValue = {
+        id: 0,
+        icon: "",
+        text: ""
+      }
+      this.drawer = !this.drawer
+
+    },
+    clickMenu(menuObj) {
+      this.listFlagValue = menuObj
+      this.drawer = !this.drawer
+    },
+    makeNewListDialog() {
+      this.drawer = !this.drawer
+      this.makeListDialog = !this.makeListDialog
+    },
+    makeNewList() {
+      this.makeListLoading = true
+      let postData = {
+        icon: "note",
+        text: this.newListTitle,
+        createdAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      };
+
+      db.collection("menu").add(postData)
+        .then((docRef) => {
+          this.makeListLoading = false
+          console.log("Document written with ID: ", docRef.id);
+          this.makeListDialog = false
+          this.drawer = !this.drawer
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    },
+    deleteList(menuObj) {
+      let deleteFlag = confirm('Delete ' + menuObj.text + "List ?")
+      if (deleteFlag) {
+        this.drawer = !this.drawer
+        this.listFlagValue = {
+          id: 0,
+          icon: "",
+          text: ""
+        }
+
+        db.collection('notes').where('menuId', '==', menuObj.id).get()
+          .then((querySnapshot) => {
+            // Once we get the results, begin a batch
+            var batch = db.batch();
+            querySnapshot.forEach((doc) => {
+              // For each doc, add a delete operation to the batch
+              console.log("deleted sub doc " + doc.id)
+              batch.delete(doc.ref);
+            });
+            // Commit the batch
+            return batch.commit();
+          }).then(() => {
+            // Delete completed!
+            db.collection("menu").doc(menuObj.id).delete().then(() => {
+              console.log("Menu Document successfully deleted!");
+            }).catch((error) => {
+              console.error("Error removing document: ", error);
+            });
+          });
+      }
+    }
+  },
+  computed: {
+    image() {
+      return this.$store.state.image
+    }
   }
 }
 </script>
 
-<style lang="scss">
-  #app-drawer {
-    .v-list__tile {
-      border-radius: 4px;
+<style>
+/* CSS */
+.gray-color {
+  background: #f1f1f1;
 
-      &--buy {
-        margin-top: auto;
-        margin-bottom: 17px;
-      }
-    }
+}
 
-    .v-image__image--contain {
-      top: 9px;
-      height: 60%;
-    }
-
-    .search-input {
-      margin-bottom: 30px !important;
-      padding-left: 15px;
-      padding-right: 15px;
-    }
-
-    div.v-responsive.v-image > div.v-responsive__content {
-      overflow-y: auto;
-    }
-  }
+* {
+  font-family: "NanumSquareRoundR"
+}
 </style>

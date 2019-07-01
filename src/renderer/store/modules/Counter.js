@@ -5,7 +5,17 @@ const state = {
   hideDrawerMenu: false,
   image: 'https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg',
   sidebarBackgroundColor: 'rgba(27, 27, 27, 0.74)',
-  menuId: ''
+  menuId: '',
+  intro: false,
+  selectedNote: {
+    noteId: "",
+    title_text: "",
+    bgImage: "",
+    subtitle: "",
+    content_text: "",
+    createdAt: "",
+  }
+
 }
 
 const getters = {
@@ -24,7 +34,13 @@ const mutations = {
   menuIdSet (state, val) {
     state.menuId = val.payload
     console.log(state.menuId)
-  }
+  },
+  setIntro (state, val) {
+    state.intro = val.payload
+  },
+  setSelectedNote (state, val) {
+    state.selectedNote = val.payload
+  },
 }
 
 const actions = {
@@ -43,6 +59,18 @@ const actions = {
   getMenuId ( { commit, state }) {
     return state.menuId
   },
+  setIntro ({ commit }, payload) {
+    commit('setIntro', payload)
+  },
+  getIntro ({ commit, state}) {
+    return state.intro
+  },
+  setSelectedNote ({ commit }, payload) {
+    commit('setSelectedNote', payload)
+  },
+  getSelectedNote ({ commit, state}) {
+    return state.selectedNote
+  }
 
 }
 
