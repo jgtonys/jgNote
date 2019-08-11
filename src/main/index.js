@@ -26,11 +26,10 @@ let tray = null
 
 //var staticFolder = path.resolve(path.join(__dirname,'ico','favicon.ico'))
 
-/*
+
 if (process.platform === "darwin") {
   app.dock.hide()
 }
-*/
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development' ?
@@ -53,50 +52,6 @@ function createWindow() {
   //const tray = new Tray(`${__dirname}/favicon.ico`);
   //const tray = new Tray(require('path').join(__dirname, "./src/main/favicon.ico"))
   createTray()
-
-  /*
-  mainWindow.webContents.on('context-menu', (e, props) => {
-    const InputMenu = Menu.buildFromTemplate([{
-      label: 'Undo',
-      role: 'undo',
-    }, {
-      label: 'Redo',
-      role: 'redo',
-    }, {
-      type: 'separator',
-    }, {
-      label: 'Cut',
-      accelerator: 'CmdOrCtrl+X',
-      role: 'cut',
-    }, {
-      label: 'Copy',
-      accelerator: 'CmdOrCtrl+C',
-      role: 'copy',
-    }, {
-      label: 'Paste',
-      accelerator: 'CmdOrCtrl+V',
-      role: 'paste',
-    }, {
-      type: 'separator',
-    }, {
-      label: 'Select all',
-      accelerator: 'CmdOrCtrl+A',
-      role: 'selectAll',
-    }, ]);
-    const {
-      isEditable
-    } = props;
-    if (isEditable) {
-      console.log("okay");
-      InputMenu.popup(mainWindow);
-    }
-    else {
-      console.log(isEditable);
-    }
-  });
-  */
-
-
 
   mainWindow.on('closed', () => {
     mainWindow = null

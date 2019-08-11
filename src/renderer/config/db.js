@@ -3,7 +3,16 @@ const path = window.require('path');
 const remote = require('electron').remote;
 const appPath = remote.app.getAppPath();
 
-const data = fs.readFileSync(path.join(appPath,'../../../firebase.json'));
+let data = "";
+
+if (process.env.NODE_ENV !== 'development') {
+  data = fs.readFileSync(path.join(appPath,'../../../firebase.json'));
+}
+else {
+  data = fs.readFileSync(path.join(__static,'../devSettingFiles/firebase.json'))
+}
+
+
 const json = data.toString('utf8');
 let settings = JSON.parse(json);
 
