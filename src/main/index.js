@@ -47,6 +47,9 @@ function createWindow() {
     width: 1000
   })
 
+  if (process.platform !== 'darwin') {
+    mainWindow.setMenuBarVisibility(false)
+  }  
   mainWindow.loadURL(winURL)
 
   //const tray = new Tray(`${__dirname}/favicon.ico`);

@@ -1,5 +1,5 @@
 <template>
-<div @keydown.meta.83.capture.stop="tmpSave" @keydown.esc.capture.stop="closeNote" class="full-height">
+<div @keydown.meta.83.capture.stop="tmpSave" @keydown.ctrl.83.capture.stop="tmpSave" @keydown.esc.capture.stop="closeNote" class="full-height">
   <v-card class="full-height">
     <v-container fluid class="bg-opacity">
       <div class="bg" :style="{ backgroundImage: `url('${backgroundUrl}')` }"></div>

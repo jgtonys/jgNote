@@ -15,9 +15,28 @@
       </v-btn>
     </v-toolbar>
     <div v-if="noteList.length==0">
-      <div class="blog-card ma-3 alt red animated fadeIn" @click="newNote()">
+      <div v-if="listFlag.id !=0" class="blog-card ma-3 alt animated fadeIn" @click="newNote()">
         <div class="meta">
-          <div class="photo"></div>
+          <div class="photo" :style="{ backgroundImage: `url('https://cdn.pixabay.com/photo/2016/05/29/16/42/speech-bubble-1423319_960_720.jpg')` }"></div>
+          <ul class="details">
+          </ul>
+        </div>
+        <div class="description pa-4">
+          <div class="hidden-wrapper">
+            <h1 class="pb-2">
+              There is No Note Available!
+            </h1>
+            <h2>create new note</h2>
+            <p>CLICK TO CREATE NEW NOTE</p>
+            <p class="read-more">
+              <!--<a href="#">Read More</a>-->
+            </p>
+          </div>
+        </div>
+      </div>
+      <div v-else class="blog-card ma-3 alt animated fadeIn">
+        <div class="meta">
+          <div class="photo" :style="{ backgroundImage: `url('https://cdn.pixabay.com/photo/2017/01/28/14/19/hello-2015466_960_720.jpg')` }"></div>
           <ul class="details">
           </ul>
         </div>
