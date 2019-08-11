@@ -29,6 +29,13 @@ export default {
 </script>
 
 <style>
+@font-face {
+ font-family: 'NanumSquareRoundR';
+ src: url(assets/font/NanumSquareRoundR.eot);
+ src: url(assets/font/NanumSquareRoundR.woff) format('woff'),
+      url(assets/font/NanumSquareRoundR.woff2) format('woff2'),
+      url(assets/font/NanumSquareRoundR.ttf) format('truetype');
+}
 
 ::-webkit-scrollbar {
     display: none;
