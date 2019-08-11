@@ -126,6 +126,7 @@ export default {
       if (deleteFlag) {
         db.collection("notes").doc(this.id).delete().then(function() {
           console.log("Document successfully deleted!");
+          this.$router.push('/');
         }).catch(function(error) {
           console.error("Error removing document: ", error);
         });
