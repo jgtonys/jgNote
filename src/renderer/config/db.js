@@ -6,7 +6,8 @@ const appPath = remote.app.getAppPath();
 let data = "";
 
 if (process.env.NODE_ENV !== 'development') {
-  data = fs.readFileSync(path.join(appPath,'../../../firebase.json'));
+  if (process.platform === "darwin") data = fs.readFileSync(path.join(appPath,'../../../firebase.json'));
+  else data = fs.readFileSync(path.join(appPath,'../../firebase.json'));
 }
 else {
   data = fs.readFileSync(path.join(__static,'../devSettingFiles/firebase.json'))

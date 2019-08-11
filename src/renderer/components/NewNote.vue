@@ -516,6 +516,7 @@ code {
   width: 100%;
   height: 100%;
   background-position: center center;
+  background-size: cover;
 }
 
 input[type=text] {
