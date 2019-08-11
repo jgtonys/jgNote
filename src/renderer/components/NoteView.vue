@@ -124,7 +124,7 @@ export default {
     remove() {
       let deleteFlag = confirm('Delete ' + this.title_text + "Note ?")
       if (deleteFlag) {
-        db.collection("notes").doc(this.id).delete().then(function() {
+        db.collection("notes").doc(this.id).delete().then(() => {
           console.log("Document successfully deleted!");
           this.$router.push('/');
         }).catch(function(error) {
