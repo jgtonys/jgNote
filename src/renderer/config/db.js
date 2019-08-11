@@ -1,15 +1,13 @@
+const fs = window.require('fs');
+const path = window.require('path');
+const remote = require('electron').remote;
+const appPath = remote.app.getAppPath();
 
-const config = {
-  apiKey: "AIzaSyDUuEm5DaxnyXp_Wl2FWw2Oh0Jxghs2kLA",
-    authDomain: "jgnote-firestore.firebaseapp.com",
-    databaseURL: "https://jgnote-firestore.firebaseio.com",
-    projectId: "jgnote-firestore",
-    storageBucket: "",
-    messagingSenderId: "879526790676",
-    appId: "1:879526790676:web:95a76f882fe7f50b"
-}
+const data = fs.readFileSync(path.join(appPath,'../../../firebase.json'));
+const json = data.toString('utf8');
+let settings = JSON.parse(json);
 
-let app = firebase.initializeApp(config)
+let app = firebase.initializeApp(settings)
 
 const testdb = app.firestore()
 

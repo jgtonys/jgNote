@@ -103,7 +103,7 @@ export default {
       allList: [],
       selectedNote: "",
       flag: true,
-      tid: 'FX46Drx90NHm4BVu33Dr'
+      tid: ''
     };
   },
   mounted() {
@@ -165,7 +165,7 @@ export default {
       else if(now.diff(d,'minutes') <= 60) return pre + now.diff(d,'minutes') + " minutes ago";
       else if(now.diff(d,'hours') <= 24) return pre + now.diff(d,'hours') + " hours ago";
       else if(now.diff(d,'days') <= 7) return pre + now.diff(d,'days') + "days ago";
-      else return d.format('YYYY-MM-DD');
+      else return d;
     },
     exportAsFile() {
       const data = this.selectedNote.content_text

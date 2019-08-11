@@ -7,6 +7,8 @@ import {
 } from 'electron'
 const path = require('path')
 
+const fs = require('fs')
+
 
 
 /**
@@ -18,13 +20,17 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-var icon = path.resolve(path.join(__static,'test.png'))
+var icon = path.resolve(path.join(__static, 'tray16.png'))
 
 let tray = null
 
 //var staticFolder = path.resolve(path.join(__dirname,'ico','favicon.ico'))
 
-app.dock.hide()
+/*
+if (process.platform === "darwin") {
+  app.dock.hide()
+}
+*/
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development' ?
@@ -47,6 +53,49 @@ function createWindow() {
   //const tray = new Tray(`${__dirname}/favicon.ico`);
   //const tray = new Tray(require('path').join(__dirname, "./src/main/favicon.ico"))
   createTray()
+
+  /*
+  mainWindow.webContents.on('context-menu', (e, props) => {
+    const InputMenu = Menu.buildFromTemplate([{
+      label: 'Undo',
+      role: 'undo',
+    }, {
+      label: 'Redo',
+      role: 'redo',
+    }, {
+      type: 'separator',
+    }, {
+      label: 'Cut',
+      accelerator: 'CmdOrCtrl+X',
+      role: 'cut',
+    }, {
+      label: 'Copy',
+      accelerator: 'CmdOrCtrl+C',
+      role: 'copy',
+    }, {
+      label: 'Paste',
+      accelerator: 'CmdOrCtrl+V',
+      role: 'paste',
+    }, {
+      type: 'separator',
+    }, {
+      label: 'Select all',
+      accelerator: 'CmdOrCtrl+A',
+      role: 'selectAll',
+    }, ]);
+    const {
+      isEditable
+    } = props;
+    if (isEditable) {
+      console.log("okay");
+      InputMenu.popup(mainWindow);
+    }
+    else {
+      console.log(isEditable);
+    }
+  });
+  */
+
 
 
   mainWindow.on('closed', () => {
@@ -89,22 +138,48 @@ function createTray() {
     mainWindow.hide();
   });
 
-  tray = new Tray(path.join(__static,'test.png'))
+  // Tray 를 나타낼 아이콘 경로. 미리 __static 이 root/static 폴더로 지정되어 있다.
+  tray = new Tray(path.join(__static, 'tray16.png'))
+
+
   tray.setToolTip('jgNote : Markdown Note Application')
   tray.on('click', () => {
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     mainWindow.show();
   })
   var contextMenu = Menu.buildFromTemplate([{
-    label: `jgNote v${app.getVersion()}`
-  }, {
-    label: 'Close',
-    click: function() {
-      mainWindow.close();
-      app.quit();
-      app.exit();
+      label: `jgNote v${app.getVersion()}`,
+      click: function() {
+        mainWindow.toggleDevTools();
+      }
+    },
+    /* Do Not Need : Implemented in frontend
+    {
+      label: 'Print',
+      click: function() {
+        mainWindow.webContents.printToPDF({
+          marginsType: 2,
+          printBackground: true,
+          printSelectionOnly: false,
+          landscape: false
+        }, (error, data) => {
+          if (error) throw error
+          fs.writeFile('/tmp/print.pdf', data, (error) => {
+            if (error) throw error
+            console.log('Write PDF successfully.')
+          })
+        })
+      }
+    },*/
+    {
+      label: 'Close',
+      click: function() {
+        mainWindow.close();
+        app.quit();
+        app.exit();
+      }
     }
-  }])
+  ])
   tray.on('right-click', () => {
     tray.popUpContextMenu(contextMenu)
   })

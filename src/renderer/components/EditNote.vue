@@ -32,19 +32,21 @@
           </v-layout>
 </div>
   </v-container>
-  <editor :options="editorOptions" :html="editorHtml" :visible="editorVisible" previewStyle="tab" height="500px" mode="markdown" v-model="content_text" />
+  <editor @load="onEditorLoad" @keydown.native="autoBracket" @keyup.native="leftCursor" :options="editorOptions" :html="editorHtml" :visible="editorVisible" previewStyle="tab" height="500px" mode="markdown" v-model="content_text" />
 </v-card>
 
-<v-dialog v-model="addImageDialog" hide-overlay>
+<v-dialog v-model="addImageDialog">
   <v-card>
-
     <v-toolbar flat>
       <v-btn icon @click="addImageDialog = false">
         <v-icon>close</v-icon>
       </v-btn>
       <v-toolbar-title>Add Background Image</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn flat @click="saveBgimg">Save</v-btn>
+      <v-btn flat
+      :loading="saveBgimgLoading"
+      :disabled="saveBgimgLoading"
+      @click="saveBgimg">Save</v-btn>
     </v-toolbar>
     <v-divider></v-divider>
 
@@ -68,10 +70,21 @@
 <v-snackbar
       v-model="notification"
       :timeout="noti.timeout"
+      :color="noti.color"
       :right="noti.right"
       :top="noti.top"
     >
-      Successfully Saved
+      {{ noti.msg }}
+    </v-snackbar>
+
+<v-snackbar
+      v-model="LoadingNotification"
+      :timeout="lnoti.timeout"
+      :color="lnoti.color"
+      :right="lnoti.right"
+      :top="lnoti.top"
+    >
+      Uploading Image..
     </v-snackbar>
 
 </div>
@@ -91,6 +104,10 @@ import {
 import {
   db
 } from '../config/db';
+import {
+  con
+} from '../config/github';
+
 export default {
   components: {
     'editor': Editor
@@ -105,27 +122,43 @@ export default {
       image: '',
       file: '',
       tempMenuId: '',
+      codeMirror: "",
       checkIcon: false,
       newNoteLoading: false,
+      saveBgimgLoading: false,
       addImageDialog: false,
       noti: {
         timeout: 2000,
+        color: "",
         right: true,
-        top: true
+        top: true,
+        msg: "",
+      },
+      lnoti: {
+        timeout: 0,
+        color: "",
+        right: true,
+        top: true,
+        msg: "",
       },
       notification: false,
+      LoadingNotification: false,
       backgroundUrl: '',
       editorOptions: {
         hideModeSwitch: false,
         usageStatistics: false,
         hooks: {
           'addImageBlobHook': (blob, callback) => {
-            //var uploadedImageURL = that.imageUpload(blob);
+            this.LoadingNotification = true;
             this.uploadFileAsync(blob).then(res => {
-              console.log(res);
-              callback(res);
+              if (!res) {
+                this.LoadingNotification = false;
+                this.showNotification("Error: Upload Failed by Connection", "error");
+              } else {
+                console.log(res);
+                callback(res);
+              }
             })
-
             return false;
             //run callback
             //callback('Image URL');
@@ -137,7 +170,6 @@ export default {
         usageStatistics: false,
         hooks: {
           'addImageBlobHook': (blob, callback) => {
-            //var uploadedImageURL = that.imageUpload(blob);
             this.uploadFileAsync(blob).then(res => {
               this.backgroundUrl = res;
               console.log(this.backgroundUrl);
@@ -150,12 +182,66 @@ export default {
           }
         },
       },
-
       editorHtml: '',
       editorVisible: true,
     }
   },
   methods: {
+    /* After autoBracket(e) function, move cursor 1-left function  -modified 190720- */
+    leftCursor(e) {
+      if (e.shiftKey && (e.keyCode == 57 || e.keyCode == 219 || e.keyCode == 222)) {
+        this.codeMirror.focus();
+        var start_cursor = this.codeMirror.getCursor();
+        this.codeMirror.setCursor({
+          line: start_cursor.line,
+          ch: start_cursor.ch - 1
+        });
+      } else if (e.keyCode == 219 || e.keyCode == 222) {
+        this.codeMirror.focus();
+        var start_cursor = this.codeMirror.getCursor();
+        this.codeMirror.setCursor({
+          line: start_cursor.line,
+          ch: start_cursor.ch - 1
+        });
+      }
+    },
+    /* Listening keboard event on markdown editor  -modified 190712- */
+    autoBracket(e) {
+      if (e.shiftKey) {
+        if (e.keyCode == 57) {
+          e.target.value += "()"
+          e.preventDefault();
+        } else if (e.keyCode == 219) {
+          e.preventDefault();
+          e.target.value += "{}"
+        } else if (e.keyCode == 222) {
+          e.preventDefault();
+          e.target.value += '""'
+        }
+      } else {
+        if (e.keyCode == 219) {
+          e.preventDefault();
+          e.target.value += "[]"
+        } else if (e.keyCode == 222) {
+          e.preventDefault();
+          e.target.value += "''"
+        }
+        if (e.metaKey && e.keyCode == 13) {
+          e.preventDefault();
+          e.target.value += "<br>\n<br>\n\n---";
+        }
+      }
+    },
+    /*
+    // <Vue-tui editor>
+    // Onload function
+    // Get instance of CodeMirror (Addon settings must be done here)
+    // - modified 170716 -
+    */
+    onEditorLoad(instance) {
+      this.codeMirror = instance.getCodeMirror();
+      this.codeMirror.setOption('fencedCodeBlockHighlighting', true);
+    },
     // blob(image) data is converted to base64 string
     // return Promise object
     readFileAsync(blob) {
@@ -180,15 +266,15 @@ export default {
       let uploadAxios = this.$http.create({
         timeout: 10000,
         headers: {
-          'Authorization': 'token 6c7974bdf899016274cb28909be5d3f60fee6577',
+          'Authorization': 'token ' + con.token,
           'Content-Type': 'application/json'
         }
       });
 
       // for github api V3 : upload content in repo
       let repo_parm = {
-        "message": "image uploaded",
-        "branch": "master",
+        "message": con.uploadMsg,
+        "branch": con.branch,
         "content": base64
       }
 
@@ -196,59 +282,37 @@ export default {
       const uid = new Date();
 
       // upload content -> response is "uploaded content url"
-      return uploadAxios.put('https://api.github.com/repos/jgtonys/upload_test/contents/screenshot-' + uid + ".png", repo_parm)
-        .then(res => res.data.content.html_url + '?raw=true')
+      return uploadAxios.put(con.repoURL + 'screenshot-' + uid + ".png", repo_parm)
+        .then(res => {
+          this.LoadingNotification = false;
+          this.showNotification("Successfully Uploaded Image!","success");
+          return res.data.content.html_url + '?raw=true'
+        })
         .catch(err => {
           console.log(err)
+          return false;
         })
-    },
-    test(blob) {
-      console.log(blob)
-      var returnValue = ""
-
-      var reader = new window.FileReader();
-      reader.readAsDataURL(blob);
-      return reader.onloadend = () => {
-        let base64data = reader.result;
-        let base64 = base64data.split(',')[1];
-      }
-      //return returnValue
-
-      /*
-      uploadAxios.put('https://api.github.com/repos/jgtonys/upload_test/contents/screenshot-' + uid + ".png", repo_parm).then(res => {
-        console.log(res.content.html_url + '?raw=true');
-      }).catch(err => {
-        console.log(err)
-      })*/
-
-      let issue_parm = {
-        "title": "image test",
-        "body": "asfwe.",
-        "assignees": []
-      }
-
-      /*
-      uploadAxios.post('https://api.github.com/repos/jgtonys/upload_test/issues',issue_parm).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log(err)
-      })
-
-      */
     },
     saveBgimg() {
       if(this.image == "") {
         alert("Image Not Selected!")
       }
       else {
+        this.saveBgimgLoading = true;
         this.uploadFileAsync(this.file).then(res => {
+          this.saveBgimgLoading = false;
           this.backgroundUrl = res;
           this.file = "";
           this.image = "";
           this.addImageDialog = !this.addImageDialog;
+
         })
       }
-
+    },
+    showNotification(msg, color) {
+      this.noti.msg = msg;
+      this.noti.color = color;
+      this.notification = true;
     },
     tmpSave() {
       this.newNoteLoading = true;
@@ -263,7 +327,7 @@ export default {
       db.collection("notes").doc(this.id).update(postData).then(() => {
         console.log("updated " + this.id)
         this.newNoteLoading = false;
-        this.notification = true;
+        this.showNotification("Successfully Saved Temporary Note", "");
       });
     },
     updateNote() {
@@ -356,11 +420,10 @@ code {
   box-shadow: none;
 }
 
-/*
 .te-toolbar-section {
   display: none;
 }
-*/
+
 .te-mode-switch-section {
   display: none !important;
 }

@@ -1,41 +1,59 @@
 <template>
-  <div @keydown.esc.capture="closeNote">
-<v-card class="full-height">
-  <v-container fluid class="bg-opacity">
-    <div class="bg" :style="{ backgroundImage: `url('${bgImage}')` }"></div>
-    <div style="height: 200px">
-      <v-layout align-start>
-        <v-btn icon>
-          <v-icon @click="closeNote">close</v-icon>
-        </v-btn>
+<div @keydown.esc.capture="closeNote" class="full-height">
+  <v-card class="full-height">
+    <v-container fluid class="bg-opacity">
+      <div class="bg" :style="{ backgroundImage: `url('${bgImage}')` }"></div>
+      <div style="height: 200px">
+        <v-layout align-start>
+          <v-btn icon>
+            <v-icon @click="closeNote">close</v-icon>
+          </v-btn>
 
-        <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon @click="editNote">edit</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon @click="exportAsFile">present_to_all</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon @click="remove">delete</v-icon>
-        </v-btn>
-      </v-layout>
-      <v-layout>
-        <h1 class="title-text">{{ title_text }}</h1>
-      </v-layout>
-      <v-layout class="mt-3">
-        <p class="subtitle">{{ subtitle }}</p>
+          <v-spacer></v-spacer>
+          <v-btn icon>
+            <v-icon @click="editNote">edit</v-icon>
+          </v-btn>
+          <!-- Save as pdf (screen capture from backend)  - modified 170721 - -->
+          <v-speed-dial v-model="saveFab" direction="bottom" transition="slide-y-reverse-transition">
+            <template v-slot:activator>
+              <v-btn v-model="saveFab" icon>
+                <v-icon>present_to_all</v-icon>
+              </v-btn>
+            </template>
+            <v-btn icon dark color="blue-grey darken-1">
+              <v-icon @click="exportAsPdf">crop_original</v-icon>
+            </v-btn>
+            <v-btn icon dark color="blue-grey darken-1">
+              <v-icon @click="exportAsFile">subject</v-icon>
+            </v-btn>
+          </v-speed-dial>
+
+          <v-btn icon>
+            <v-icon @click="remove">delete</v-icon>
+          </v-btn>
+        </v-layout>
+        <v-layout>
+          <h1 class="title-text">{{ title_text }}</h1>
+        </v-layout>
+        <v-layout class="mt-3">
+          <p class="subtitle">{{ subtitle }}</p>
         </v-layout>
       </div>
-  </v-container>
-  <div class="pa-5">
-  <viewer :value="content_text" height="100%" />
-</div>
-</v-card>
+    </v-container>
+    <div class="pa-5">
+      <viewer :value="content_text" height="100%" />
+    </div>
+  </v-card>
 </div>
 </template>
 
 <script>
+import {
+  remote
+} from 'electron';
+import {
+  fs
+} from 'fs';
 import 'highlight.js/styles/github.css';
 import {
   Viewer
@@ -58,10 +76,10 @@ export default {
       subtitle: "",
       createdAt: "",
       content_text: "",
+      saveFab: false,
     }
   },
   beforeMount() {
-
     this.$store.dispatch('getSelectedNote').then(r => {
       this.id = r.id
       this.title_text = r.title_text
@@ -73,6 +91,33 @@ export default {
 
   },
   methods: {
+    /*
+    //  <Export as pdf>
+    //  Get electron window.webContents
+    //  printToPDF, encode to 'base64'
+    //  convert base64 to blob
+    //  - modified 190721 -
+    */
+    exportAsPdf() {
+      remote.getCurrentWebContents().printToPDF({
+        marginsType: 2,
+        printBackground: true,
+        printSelectionOnly: false,
+        landscape: false
+      }, (error, data) => {
+        if (error) throw error
+        const blob = new Blob([data], {
+          type: 'application/pdf'
+        })
+        const e = document.createEvent('MouseEvents'),
+        a = document.createElement('a');
+        a.download = this.title_text + ".pdf";
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl = ['application/pdf', a.download, a.href].join(':');
+        e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        a.dispatchEvent(e);
+      })
+    },
     editNote() {
       this.$router.push('/editNote')
     },
@@ -91,7 +136,9 @@ export default {
     },
     exportAsFile() {
       const data = this.content_text
-      const blob = new Blob([data], {type: 'text/plain'})
+      const blob = new Blob([data], {
+        type: 'text/plain'
+      })
       const e = document.createEvent('MouseEvents'),
       a = document.createElement('a');
       a.download = this.title_text + ".md";
@@ -109,6 +156,7 @@ export default {
 
 <style>
 @import "../assets/tui-editor-contents.css";
+
 .full-height {
   height: 100%;
 }

@@ -1,6 +1,6 @@
 {
   "name": "jgnote",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "author": "jgtony <jgtony@gmail.com>",
   "description": "vue + firebase + electron desktop application",
   "license": null,
@@ -43,10 +43,10 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns"
+      "icon": "build/icons/icon256.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon256.ico"
     },
     "linux": {
       "icon": "build/icons"
@@ -55,20 +55,18 @@
   "dependencies": {
     "@firebase/app": "^0.4.9",
     "@firebase/firestore": "^1.4.3",
-    "@progress/kendo-theme-default": "^3.7.0",
-    "@progress/kendo-treeview-vue-wrapper": "^2019.2.621",
-    "@progress/kendo-ui": "^2019.2.626",
     "@toast-ui/vue-editor": "^1.1.1",
     "axios": "^0.18.0",
+    "electron-contextmenu-middleware": "^1.0.3",
+    "electron-input-menu": "^2.1.0",
     "firebase": "^6.2.3",
     "moment": "^2.24.0",
-    "nedb": "^1.8.0",
-    "nedb-promise": "^2.0.1",
+    "read-ini-file": "^2.0.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
+    "vue-highlightjs": "^1.3.3",
     "vue-momentjs": "^0.1.2",
     "vue-router": "^3.0.1",
-    "vue-swipe-actions": "^2.0.0-beta.16",
     "vuefire": "^2.0.0",
     "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0"

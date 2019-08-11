@@ -1,13 +1,45 @@
-# jgNote
-Electron + Vuejs + Firebase Desktop note application
+## [Electron + Vue.js + Firebase] Cross-Platform Markdown Note Application
+
+---
+
+- No Local Database [online sync, enable offline]
+- Cross-Platform [Windows,Mac,Linux,(mobile)]
+- Markdown [export PDF, image auto uploading to github]
+- Custom keyboard shortcuts
 
 
-## To_Do
+### How to Install
 
-- 위로 스와이프하면 새로운 게시글 생성되게
+---
 
-- 수정하기 버튼 만들기 구현하기
+1. install dependencies
 
-- bottom nav 만들기 (고정)
+```bash
+npm install
+```
 
-- 메뉴 동적생성
+---
+
+2. rebuild from OS
+
+```bash
+npm rebuild --runtime=electron --target=2.0.4
+```
+
+---
+
+3. build project
+
+```bash
+npm run build
+```
+
+---
+
+4. execute installer
+
+installer will be in `/build` folder
+
+---
+
+5. copy settingFiles to installed Folder
