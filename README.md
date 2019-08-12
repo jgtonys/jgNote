@@ -44,6 +44,4 @@ copy `firebase.json` and `github.json` to
 
 And write `firebase.json` by creating [firestore database](https://firebase.google.com). Also github api access token and repository must be in `github.json`
 
-Below video shows **how to set json files**
-
-<iframe width="790" height="444" src="https://www.youtube.com/embed/N1QT2c72KCI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+This [Video](https://youtu.be/N1QT2c72KCI) shows **how to set json files**
