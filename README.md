@@ -41,7 +41,11 @@ If you don't want to build from source, you can download installer from below **
 
 After install, jgNote will be automatically powered up but **nothing will be shown**. **This is because there is no firebase & github settings for jgNote**. Follow below instructions.
 
-**Close Application via tray icon(IMPORTANT!!) YOU NEED TO CLOSE APPLICATION VIA TRAY ICON! This application is not really closed until tray-close is clicked!**
+**Close Application via tray icon(IMPORTANT!!) **
+
+![4C343A87-41B0-4C8A-9182-27711EB03D93.png](https://github.com/jgtonys/upload_test/blob/master/screenshot-Mon%20Aug%2012%202019%2017:01:51%20GMT%2B0900%20%28KST%29.png?raw=true)
+
+*YOU NEED TO CLOSE APPLICATION VIA TRAY ICON! This application is not really closed until tray-close is clicked!*
 
 **copy settingFiles to installed Folder**
 
@@ -49,13 +53,32 @@ This [Video](https://youtu.be/N1QT2c72KCI) shows **how to set json files**
 
 *In firebase setting, google analytics is optional. And if you do not need image uploading for markdown note, `github.json` can be empty. Only firebase.json must be set to execute jgNote correctly*
 
-When making new firebase database(firestore), you need to make new database from firebase project. Otherwise, application will cause error.
+After making firebase project and register web application to firebase, then click database menu.
+
+![image.png](https://github.com/jgtonys/upload_test/blob/master/screenshot-Mon%20Aug%2012%202019%2017:10:55%20GMT%2B0900%20%28KST%29.png?raw=true)
+
+Click **Make Database**
+
+![image.png](https://github.com/jgtonys/upload_test/blob/master/screenshot-Mon%20Aug%2012%202019%2017:11:32%20GMT%2B0900%20%28KST%29.png?raw=true)
+
+Click **TEST MODE** and Next (you can set lock mode if you can modify source)
+
+![image.png](https://github.com/jgtonys/upload_test/blob/master/screenshot-Mon%20Aug%2012%202019%2017:12:36%20GMT%2B0900%20%28KST%29.png?raw=true)
+
+Set location and Next
+
+![image.png](https://github.com/jgtonys/upload_test/blob/master/screenshot-Mon%20Aug%2012%202019%2017:14:49%20GMT%2B0900%20%28KST%29.png?raw=true)
+
+Then you will see empty database like this!
+
+![image.png](https://github.com/jgtonys/upload_test/blob/master/screenshot-Mon%20Aug%2012%202019%2017:16:25%20GMT%2B0900%20%28KST%29.png?raw=true)
+
+**If you can see empty database, firestore setting from web is all done.**
 
 copy `firebase.json` and `github.json` to
 
 - mac : `/Applications/jgnote.app/`
 - windows : `C:/Users/{USERNAME}/AppData/Local/Programs/jgnote/`
-
 
 And write `firebase.json` by creating [firestore database](https://firebase.google.com). Also github api access token and repository must be in `github.json`.
 
