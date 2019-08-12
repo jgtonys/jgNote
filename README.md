@@ -49,7 +49,16 @@ After install, jgNote will be automatically powered up but **nothing will be sho
 
 **copy settingFiles to installed Folder**
 
-This [Video](https://youtu.be/N1QT2c72KCI) shows **how to set json files**
+copy `firebase.json` and `github.json` to
+
+- mac : `/Applications/jgnote.app/`
+- windows : `C:/Users/{USERNAME}/AppData/Local/Programs/jgnote/`
+
+And write `firebase.json` by creating [firestore database](https://firebase.google.com). Also github api access token and repository must be in `github.json`.
+
+This [Video](https://youtu.be/GZcl7ICXxlw) shows **how to set json files**
+
+<br>
 
 *In firebase setting, google analytics is optional. And if you do not need image uploading for markdown note, `github.json` can be empty. Only firebase.json must be set to execute jgNote correctly*
 
@@ -73,14 +82,7 @@ Then you will see empty database like this!
 
 ![image.png](https://github.com/jgtonys/upload_test/blob/master/screenshot-Mon%20Aug%2012%202019%2017:16:25%20GMT%2B0900%20%28KST%29.png?raw=true)
 
-**If you can see empty database, firestore setting from web is all done.**
-
-copy `firebase.json` and `github.json` to
-
-- mac : `/Applications/jgnote.app/`
-- windows : `C:/Users/{USERNAME}/AppData/Local/Programs/jgnote/`
-
-And write `firebase.json` by creating [firestore database](https://firebase.google.com). Also github api access token and repository must be in `github.json`.
+**If you can see empty database, firestore setting from web is all done. `github.json` setting is shown in above video**
 
 
 
