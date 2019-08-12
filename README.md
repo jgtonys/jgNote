@@ -35,20 +35,27 @@ After build process, installer will be located in `jgNote/build/`
 
 ## Install and Custom Settings
 
+If you don't want to build from source, you can download installer from below **Installer + json template link**.
+
 **execute installer**
 
 After install, jgNote will be automatically powered up but **nothing will be shown**. **This is because there is no firebase & github settings for jgNote**. Follow below instructions.
 
 **copy settingFiles to installed Folder**
 
+This [Video](https://youtu.be/N1QT2c72KCI) shows **how to set json files**
+
+*In firebase setting, google analytics is optional. And if you do not need image uploading for markdown note, `github.json` can be empty. Only firebase.json must be set to execute jgNote correctly*
+
 copy `firebase.json` and `github.json` to
 
 - mac : `/Applications/jgnote.app/`
 - windows : `C:/Users/{USERNAME}/AppData/Local/Programs/jgnote/`
 
-And write `firebase.json` by creating [firestore database](https://firebase.google.com). Also github api access token and repository must be in `github.json`
 
-This [Video](https://youtu.be/N1QT2c72KCI) shows **how to set json files**
+And write `firebase.json` by creating [firestore database](https://firebase.google.com). Also github api access token and repository must be in `github.json`.
+
+
 
 ## Installer + json template Link
 
