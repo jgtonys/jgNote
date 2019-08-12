@@ -54,4 +54,4 @@ This [Video](https://youtu.be/N1QT2c72KCI) shows **how to set json files**
 
 [Windows](https://drive.google.com/file/d/1Et2UXvV02zO-SvmB4x1e53wO27tDfT_m/view?usp=sharing)
 
-[Mac]()
+[Mac](https://drive.google.com/file/d/15fPqdk-lGVUxnj7DWaLZQJrqjx8Tk0NX/view?usp=sharing)
