@@ -41,11 +41,15 @@ If you don't want to build from source, you can download installer from below **
 
 After install, jgNote will be automatically powered up but **nothing will be shown**. **This is because there is no firebase & github settings for jgNote**. Follow below instructions.
 
+**Close Application via tray icon(IMPORTANT!!) YOU NEED TO CLOSE APPLICATION VIA TRAY ICON! This application is not really closed until tray-close is clicked!**
+
 **copy settingFiles to installed Folder**
 
 This [Video](https://youtu.be/N1QT2c72KCI) shows **how to set json files**
 
 *In firebase setting, google analytics is optional. And if you do not need image uploading for markdown note, `github.json` can be empty. Only firebase.json must be set to execute jgNote correctly*
+
+When making new firebase database(firestore), you need to make new database from firebase project. Otherwise, application will cause error.
 
 copy `firebase.json` and `github.json` to
 
