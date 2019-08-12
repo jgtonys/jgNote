@@ -43,10 +43,10 @@
         <div class="description pa-4">
           <div class="hidden-wrapper">
             <h1 class="pb-2">
-              There is No Note Available!
+              Welcome to jgNote!
             </h1>
-            <h2>create new note</h2>
-            <p>CLICK TO CREATE NEW NOTE</p>
+            <h2>create new list and note</h2>
+            <p>Open drawer and make new list! After making new list, you will be able to make new note!</p>
             <p class="read-more">
               <!--<a href="#">Read More</a>-->
             </p>

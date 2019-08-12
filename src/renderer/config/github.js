@@ -6,8 +6,8 @@ const appPath = remote.app.getAppPath();
 let data = "";
 
 if (process.env.NODE_ENV !== 'development') {
-  if (process.platform === "darwin") data = fs.readFileSync(path.join(appPath,'../../../firebase.json'));
-  else data = fs.readFileSync(path.join(appPath,'../../firebase.json'));
+  if (process.platform === "darwin") data = fs.readFileSync(path.join(appPath,'../../../github.json'));
+  else data = fs.readFileSync(path.join(appPath,'../../github.json'));
 }
 else {
   data = fs.readFileSync(path.join(__static,'../devSettingFiles/github.json'))
@@ -16,6 +16,6 @@ else {
 const json = data.toString('utf8');
 let settings = JSON.parse(json);
 
-console.log(settings);
+//console.log(settings);
 
 export const con = settings;
