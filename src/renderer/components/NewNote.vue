@@ -28,7 +28,7 @@
         </v-layout>
       </div>
     </v-container>
-    <editor @load="onEditorLoad" @keydown.native="autoBracket" @keyup.native="leftCursor" :options="editorOptions" :html="editorHtml" :visible="editorVisible" previewStyle="tab" height="100%" mode="markdown" v-model="content_text" />
+    <editor ref="toastuiEditor" @load="onEditorLoad" @keydown.native="autoBracket" @keyup.native="leftCursor" :options="editorOptions" :html="editorHtml" :visible="editorVisible" previewStyle="tab" height="100%" mode="markdown" />
   </v-card>
 
   <v-dialog v-model="addImageDialog">
@@ -87,7 +87,7 @@ import { mapGetters, mapState } from 'vuex';
 import { Editor } from '@toast-ui/vue-editor'
 import { db } from '../config/db';
 import { con } from '../config/github';
-import 'tui-editor/dist/tui-editor.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
 import 'codemirror/lib/codemirror.js';
 import 'highlight.js/lib/highlight.js';
 import 'highlight.js/styles/github.css';
@@ -323,7 +323,7 @@ export default {
               todo: this.checkIcon,
               completed: false,
               bgImage: this.backgroundUrl,
-              content_text: this.content_text,
+              content_text: this.$refs.toastuiEditor.invoke('getMarkdown'),
               menuId: menuId,
               createdAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
               updatedAt: "",
@@ -353,7 +353,7 @@ export default {
           subtitle: this.subtitle,
           todo: this.checkIcon,
           bgImage: this.backgroundUrl,
-          content_text: this.content_text,
+          content_text: this.$refs.toastuiEditor.invoke('getMarkdown'),
           updatedAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
         };
         db.collection("notes").doc(this.id).update(postData).then(() => {
@@ -375,7 +375,7 @@ export default {
               todo: this.checkIcon,
               completed: false,
               bgImage: this.backgroundUrl,
-              content_text: this.content_text,
+              content_text: this.$refs.toastuiEditor.invoke('getMarkdown'),
               menuId: menuId,
               createdAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
             };
@@ -405,7 +405,7 @@ export default {
           subtitle: this.subtitle,
           todo: this.checkIcon,
           bgImage: this.backgroundUrl,
-          content_text: this.content_text,
+          content_text: this.$refs.toastuiEditor.invoke('getMarkdown'),
           updatedAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
         };
         db.collection("notes").doc(this.id).update(postData).then(() => {

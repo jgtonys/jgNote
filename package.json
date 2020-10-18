@@ -55,7 +55,8 @@
   "dependencies": {
     "@firebase/app": "^0.4.9",
     "@firebase/firestore": "^1.4.3",
-    "@toast-ui/vue-editor": "^1.1.1",
+    "@toast-ui/editor-plugin-code-syntax-highlight": "^1.0.0",
+    "@toast-ui/vue-editor": "^2.4.0",
     "axios": "^0.18.0",
     "electron-contextmenu-middleware": "^1.0.3",
     "electron-input-menu": "^2.1.0",

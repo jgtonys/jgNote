@@ -41,29 +41,22 @@
       </div>
     </v-container>
     <div class="pa-5">
-      <viewer :value="content_text" height="100%" />
+      <viewer ref="toastuiEditor" @load="onEditorLoad" v-if="content_text != null" :initialValue="content_text"/>
     </div>
   </v-card>
 </div>
 </template>
 
 <script>
-import {
-  remote
-} from 'electron';
-import {
-  fs
-} from 'fs';
+import { remote } from 'electron';
+import { Viewer } from '@toast-ui/vue-editor'
+import { db } from '../config/db';
+import { mapState } from 'vuex';
 import 'highlight.js/styles/github.css';
-import {
-  Viewer
-} from '@toast-ui/vue-editor'
-import {
-  db
-} from '../config/db';
-import {
-  mapState
-} from 'vuex';
+import hljs from "highlight.js";
+
+hljs.initHighlightingOnLoad();
+
 export default {
   components: {
     'viewer': Viewer
@@ -75,8 +68,12 @@ export default {
       bgImage: "",
       subtitle: "",
       createdAt: "",
-      content_text: "",
+      content_text: null,
       saveFab: false,
+      options: {
+        height: "100%",
+        //plugins: [codeSyntaxHighlight]
+      }
     }
   },
   beforeMount() {
@@ -87,10 +84,22 @@ export default {
       this.subtitle = r.subtitle
       this.content_text = r.content_text
       this.createdAt = r.createdAt
+      //this.$refs.remarkEditorRef.invoke('setHtml', content)
     })
+
+
 
   },
   methods: {
+    onEditorLoad() {
+      //let tmpDOM = new DOMParser().parseFromString(sourceHtml, 'text/html').body
+      /*
+      tmpDOM.querySelectorAll('pre code').forEach((block) => {
+           hljs.highlightBlock(block);
+      });*/
+
+
+    },
     /*
     //  <Export as pdf>
     //  Get electron window.webContents
@@ -156,8 +165,6 @@ export default {
 </script>
 
 <style>
-@import "../assets/tui-editor-contents.css";
-
 .full-height {
   height: 100%;
 }

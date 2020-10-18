@@ -32,7 +32,7 @@
           </v-layout>
 </div>
   </v-container>
-  <editor @load="onEditorLoad" @keydown.native="autoBracket" @keyup.native="leftCursor" :options="editorOptions" :html="editorHtml" :visible="editorVisible" previewStyle="tab" height="100%" mode="markdown" v-model="content_text" />
+  <editor ref="toastuiEditor" v-if="content_text != null" @change="onEditorChange" @load="onEditorLoad" @keydown.native="autoBracket" @keyup.native="leftCursor" :options="editorOptions" :visible="editorVisible" previewStyle="tab" height="100%" mode="markdown" :initialValue="content_text" />
 </v-card>
 
 <v-dialog v-model="addImageDialog">
@@ -95,8 +95,7 @@ import {
   mapGetters,
   mapState
 } from 'vuex';
-import 'tui-editor/dist/tui-editor.css';
-import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
 import 'highlight.js/styles/github.css';
 import {
   Editor
@@ -117,7 +116,7 @@ export default {
       id: "",
       title_text: "",
       subtitle: "",
-      content_text: "",
+      content_text: null,
       createdAt: "",
       image: '',
       file: '',
@@ -242,6 +241,11 @@ export default {
       this.codeMirror = instance.getCodeMirror();
       this.codeMirror.setOption('fencedCodeBlockHighlighting', true);
     },
+    onEditorChange() {
+      //this.codeMirror.setOption('mode', 'JavaScript');
+      //this.codeMirror.setOption('smartIndent', true);
+      //console.log(this.codeMirror.getValue());
+    },
     // blob(image) data is converted to base64 string
     // return Promise object
     readFileAsync(blob) {
@@ -321,11 +325,12 @@ export default {
         subtitle: this.subtitle,
         todo: this.checkIcon,
         bgImage: this.backgroundUrl,
-        content_text: this.content_text,
+        content_text: this.$refs.toastuiEditor.invoke('getMarkdown'),
         updatedAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       };
       db.collection("notes").doc(this.id).update(postData).then(() => {
         console.log("updated " + this.id)
+        console.log(postData);
         this.newNoteLoading = false;
         this.showNotification("Successfully Saved Temporary Note", "");
       });
@@ -337,7 +342,7 @@ export default {
         subtitle: this.subtitle,
         todo: this.checkIcon,
         bgImage: this.backgroundUrl,
-        content_text: this.content_text,
+        content_text: this.$refs.toastuiEditor.invoke('getMarkdown'),
         updatedAt: this.$moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       };
       db.collection("notes").doc(this.id).update(postData).then(() => {
